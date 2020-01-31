@@ -8,7 +8,7 @@ async function bootstrap() {
   
   //开启全局验证
   app.useGlobalPipes(new ValidationPipe())
-  
+  app.enableCors()
   const options = new DocumentBuilder()
   .setTitle('NestJS博客API')
   .setDescription('The blog API description')

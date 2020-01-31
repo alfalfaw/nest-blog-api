@@ -14,8 +14,8 @@ class CreatePostDto {
     content: string
     @ApiProperty({ example: '作者', description: '文章作者' })
     author: string
-    @ApiProperty({ example: '2010-1-26', description: '创建时间' })
-    created: Date
+    @ApiProperty({ example: 'jpg', description: '文章封面' })
+    cover: string
 }
 
 class UpdatePostDto {
@@ -24,8 +24,8 @@ class UpdatePostDto {
     title: string
     @ApiProperty({ example: '内容一', description: '文章内容' })
     content: string
-    @ApiProperty({ example: '2010-1-26', description: '更新时间' })
-    update: Date
+    @ApiProperty({ example: 'jpg', description: '文章封面' })
+    cover: string
 }
 
 @Controller('posts')
@@ -76,6 +76,22 @@ export class PostsController {
         }
     }
 
-
+   
+   //从服务端获取avue option
+    @Get('option')
+    @ApiOperation({ summary: '文章数据配置' })
+    option() {
+        return {
+            title: "文章管理",
+            column: [
+                { prop: "title", label: "标题" },
+                { prop: "content", label: "内容", type: 'textarea', minRows: 5 },
+                { prop: "author", label: "作者" },
+                { prop: "createdAt", label: "创建时间", editDisplay: false, addDisplay: false },
+                { prop: "updatedAt", label: "更新时间", editDisplay: false, addDisplay: false },
+                { prop: "cover", label: "封面" }
+            ]
+        }
+    }
 
 }
