@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Delete, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Put, Query } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator'
 import { Post as PostSchema } from './post.model'
@@ -37,8 +37,12 @@ export class PostsController {
 
     @Get()
     @ApiOperation({ summary: '显示博客列表' })
-    async index() {
-        return await this.postModel.find()
+    async index(@Query('page') page: string = '1', @Query('limit') limit: string = '5') {
+        let page_num = parseInt(page)
+        let limit_num = parseInt(limit)
+        let total = await this.postModel.count({})
+        let data = await this.postModel.find({}, null, { skip: (page_num - 1) * limit_num, limit: limit_num })
+        return { total: total, data: data }
     }
 
     @Post('create')
@@ -76,8 +80,8 @@ export class PostsController {
         }
     }
 
-   
-   //从服务端获取avue option
+
+    //从服务端获取avue option
     @Get('option')
     @ApiOperation({ summary: '文章数据配置' })
     option() {

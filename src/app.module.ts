@@ -9,7 +9,9 @@ import { PicturesModule } from './pictures/pictures.module';
 @Module({
   imports: [
     TypegooseModule.forRoot("mongodb://localhost:27017/nest-blog-api", {
-      useNewUrlParser: true
+      useNewUrlParser: true,
+      useUnifiedTopology: true ,
+      useFindAndModify:false
     }),
     PostsModule,
     TagsModule,
