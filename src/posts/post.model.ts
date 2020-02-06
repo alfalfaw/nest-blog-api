@@ -1,4 +1,5 @@
-import { prop, modelOptions } from '@typegoose/typegoose';
+import { prop, modelOptions, Ref } from '@typegoose/typegoose';
+import { Tag } from 'src/tags/tag.model';
 
 //example of model----typegoose
 // import { prop } from "@typegoose/typegoose";
@@ -18,13 +19,21 @@ import { prop, modelOptions } from '@typegoose/typegoose';
 export class Post {
   @prop({ required: true })
   title: string;
+  @prop()
+  desc?: string;
+  @prop()
+  content?: string;
+  @prop()
+  html?: string;
+  @prop()
+  author?: string;
+  @prop()
+  click_num: number;
+  @prop()
+  cover?: string;
+  @prop()
+  tag?: Ref<Tag>;
   @prop({ required: true })
-  content: string;
-  @prop()
-  author: string;
-  @prop()
-  click_num: Number;
-  @prop()
-  cover: string;
+  publish: boolean;
 
 }

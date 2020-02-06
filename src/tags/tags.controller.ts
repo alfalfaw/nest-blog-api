@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Put, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Put, Param, Delete, Query } from '@nestjs/common';
 import { ApiProperty, ApiTags, ApiOperation } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator';
 import { InjectModel } from 'nestjs-typegoose';
@@ -28,8 +28,34 @@ export class TagsController {
 
     @Get()
     @ApiOperation({ summary: '标签列表' })
-    async index() {
-        return await this.tagModel.find()
+    async index(@Query('page') page: string, @Query('limit') limit: string, @Query('sort') sort: string = '-_id', @Query('where') where) {
+        let page_num = null
+        let limit_num = null
+        let total = null
+        let data = null
+
+        //符合条件数量
+        if (typeof where === 'undefined') {
+            where = {}
+        } else {
+            where = JSON.parse(where)
+        }
+        total = await this.tagModel.countDocuments(where)
+        // global.console.log('tags count   '+total)
+
+        if (typeof limit === 'undefined') {
+            data = await this.tagModel.find()
+            return { total: total, data: data }
+        }
+        //分页查询
+        page_num = parseInt(page)
+        // global.console.log(page_num)
+        limit_num = parseInt(limit)
+
+        data = await this.tagModel.find(where, null, { skip: (page_num - 1) * limit_num, limit: limit_num, sort: sort })
+
+        return { total: total, data: data }
+
     }
 
     @Post('create')
@@ -52,14 +78,14 @@ export class TagsController {
     @ApiOperation({ summary: '修改标签' })
     async update(@Param('id') id: string, @Body() updateTagDto: UpdateTagDto) {
         await this.tagModel.findByIdAndUpdate(id, updateTagDto)
-        return { sucess: true }
+        return { success: true }
     }
 
     @Delete('delete/:id')
     @ApiOperation({ summary: '删除标签' })
     async remove(@Param('id') id: string) {
         await this.tagModel.findByIdAndDelete(id)
-        return { sucess: true }
+        return { success: true }
     }
 
     //从服务端获取avue option
@@ -69,9 +95,9 @@ export class TagsController {
         return {
             title: "标签管理",
             column: [
-                { prop: "name", label: "标签名" },
-                { prop: "createdAt", label: "创建时间", editDisplay: false, addDisplay: false },
-                { prop: "updatedAt", label: "更新时间", editDisplay: false, addDisplay: false }
+                { prop: "name", label: "标签名", sortable: true, search: true, row: true },
+                { prop: "createdAt", label: "创建时间", editDisplay: false, addDisplay: false, sortable: true, type: "date", format: "yyyy-MM-dd hh:mm" },
+                { prop: "updatedAt", label: "更新时间", editDisplay: false, addDisplay: false, sortable: true, type: "date", format: "yyyy-MM-dd hh:mm" }
             ]
         }
     }

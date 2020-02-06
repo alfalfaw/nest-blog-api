@@ -2,10 +2,15 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  
+  //添加静态文件token，指定app类型
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  app.useStaticAssets('uploads',{
+    //访问前缀
+    prefix:'/uploads'  
+  })
   //开启全局验证
   app.useGlobalPipes(new ValidationPipe())
   app.enableCors()
