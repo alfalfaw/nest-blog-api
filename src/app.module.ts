@@ -6,9 +6,10 @@ import { TypegooseModule } from 'nestjs-typegoose'
 import { TagsModule } from './tags/tags.module';
 import { PicturesModule } from './pictures/pictures.module';
 import { MulterModule } from '@nestjs/platform-express';
-import { Website } from './app.model';
-import { Post } from './posts/post.model';
-import { Tag } from './tags/tag.model';
+import { AuthModule } from './auth/auth.module';
+import { WebsiteModule } from './website/website.module';
+import { UsersModule } from './users/users.module';
+
 
 //ali-oss
 const MAO = require('multer-aliyun-oss');
@@ -20,8 +21,6 @@ const MAO = require('multer-aliyun-oss');
       useUnifiedTopology: true,
       useFindAndModify: false
     }),
-    //网站信息
-    TypegooseModule.forFeature([Website,Post,Tag]),
     //设置上传地址
     MulterModule.register({
       storage: MAO({
@@ -36,7 +35,10 @@ const MAO = require('multer-aliyun-oss');
     }),
     PostsModule,
     TagsModule,
-    PicturesModule],
+    PicturesModule,
+    AuthModule,
+    WebsiteModule,
+    UsersModule],
   controllers: [AppController],
   providers: [AppService],
 })

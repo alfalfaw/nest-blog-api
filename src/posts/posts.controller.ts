@@ -4,8 +4,9 @@ import { IsNotEmpty } from 'class-validator'
 import { Post as PostSchema } from './post.model'
 import { InjectModel } from 'nestjs-typegoose';
 import { ModelType } from '@typegoose/typegoose/lib/types';
-import { Tag } from 'src/tags/tag.model';
-import { Website } from 'src/app.model';
+import { Tag } from '../tags/tag.model';
+import { Website } from '../website/website.model';
+
 //dto数据传输对象
 class CreatePostDto {
     // 定义属性
@@ -53,7 +54,7 @@ export class PostsController {
 
     @Get()
     @ApiOperation({ summary: '显示博客列表' })
-    async index(@Query('page') page: string = '1', @Query('limit') limit: string = '5', @Query('sort') sort: string = '-_id', @Query('admin') admin: boolean = false, @Query('where') where) {
+    async index(@Query('page') page:string, @Query('limit') limit:string, @Query('sort') sort: string = '-_id', @Query('admin') admin: boolean = false, @Query('where') where) {
         let page_num = null
         let limit_num = null
         let total = null
@@ -145,7 +146,7 @@ export class PostsController {
                 { prop: "author", label: "作者", row: true },
                 { prop: "createdAt", label: "创建时间", editDisplay: false, addDisplay: false, sortable: true, type: "date", format: "yyyy-MM-dd hh:mm" },
                 { prop: "updatedAt", label: "更新时间", editDisplay: false, addDisplay: false, sortable: true, type: "date", format: "yyyy-MM-dd hh:mm" },
-                { prop: "cover", label: "封面", type: 'upload', listType: 'picture-img', row: true, action: 'website/upload', width: 120 },
+                { prop: "cover", label: "封面", type: 'upload', listType: 'picture-img', row: true, action: 'upload', width: 120 },
                 { prop: "tag", label: "标签", type: 'select', dicData: tags, row: true, width: 120 },
                 { prop: "publish", label: "是否发布", type: 'switch', row: true, displayAs: 'switch', value: false }
 

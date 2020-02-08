@@ -26,19 +26,34 @@ export class PicturesController {
 
     @Get()
     @ApiOperation({ summary: '显示图片列表' })
-    async index(@Query('page') page: string = '1', @Query('limit') limit: string = '5', @Query('sort') sort: string = '-_id', @Query('where') where) {
-        let page_num = parseInt(page)
-        // global.console.log(page_num)
-        let limit_num = parseInt(limit)
+    async index(@Query('page') page:string, @Query('limit') limit:string, @Query('sort') sort: string = '-_id', @Query('where') where) {
+        let page_num = null
+        let limit_num = null
+        let total = null
+        let data = null
 
         if (typeof where === 'undefined') {
             where = {}
         } else {
             where = JSON.parse(where)
         }
+
         //符合条件的项目总数postModel.estimatedDocumentCount()不带条件
-        let total = await this.pictureModel.countDocuments(where)
-        let data = await this.pictureModel.find(where, null, { skip: (page_num - 1) * limit_num, limit: limit_num, sort: sort })
+        total = await this.pictureModel.countDocuments(where)
+
+        if (typeof limit === 'undefined') {
+            data = await this.pictureModel.find(where)
+            return { total: total, data: data }
+        }
+
+        page_num = parseInt(page)
+        limit_num = parseInt(limit)
+
+        // let sum = await this.postModel.estimatedDocumentCount()
+
+        data = await this.pictureModel.find(where, null, { skip: (page_num - 1) * limit_num, limit: limit_num, sort: sort })
+
+
         return { total: total, data: data }
 
     }
@@ -86,7 +101,7 @@ export class PicturesController {
             title: "图片管理",
             column: [
                 { prop: "owner", label: "归属", search: true, row: true },
-                { prop: "desc", label: "描述", type: 'textarea', minRows: 5, row: true,span:24 },
+                { prop: "desc", label: "描述", type: 'textarea', minRows: 5, row: true, span: 24 },
                 { prop: "createdAt", label: "创建时间", editDisplay: false, addDisplay: false, sortable: true, type: "date", format: "yyyy-MM-dd hh:mm" },
                 { prop: "updatedAt", label: "更新时间", editDisplay: false, addDisplay: false, sortable: true, type: "date", format: "yyyy-MM-dd hh:mm" },
                 { prop: "url", label: "图片链接", type: 'upload', listType: 'picture-img', row: true, action: 'website/upload', width: 120 }
